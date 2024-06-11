@@ -9,7 +9,9 @@ class INeuralNetwork(nn.Module):
         self.model=nn.Sequential(
             nn.Linear(7500,2000),
             nn.Sigmoid(),
-            nn.Linear(2000,5),
+            nn.Linear(2000,1000),
+            nn.Sigmoid(),
+            nn.Linear(1000,5),
             nn.Sigmoid()
         )
 
