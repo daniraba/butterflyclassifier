@@ -12,7 +12,9 @@ n=INeuralNetwork()
 def preprocess(f):
     image=Image.open(f)
     image=image.resize((50,50))
+    #print(image.size)
     a=np.array(image)/255.0
+    #print(a.shape)
     a=a.reshape(50*50*3)
     return a
 
@@ -25,10 +27,14 @@ for i in range(len(types)):
     for filename in os.listdir(directory):
         f= os.path.join(directory,filename)
         print(i, f, c)
-        if os.path.isfile(f):
-            img=preprocess(f)
-            label=i
-
+        try:
+            if os.path.isfile(f):
+                img=preprocess(f)
+                label=i
+        except:
+            print('Skipped')
+            continue
+    
         target=np.zeros(len(types))
         target[label]=1.0
 
@@ -39,3 +45,5 @@ for i in range(len(types)):
         c += 1
         if c == 100:
             break
+
+torch.save(n.state_dict(),"Ins.pth")
