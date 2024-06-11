@@ -18,7 +18,7 @@ def preprocess(f):
     a=a.reshape(50*50*3)
     return a
 
-train="Project 1/Train/"
+train="Train/"
 types=["Butterfly","Grasshopper","Ladybug","Dragonfly","Mosquito"]
 
 for i in range(len(types)):
@@ -43,7 +43,7 @@ for i in range(len(types)):
         n.train(img,target) # Training
 
         c += 1
-        if c == 100: # Training the first 100 files per insect
+        if c == 400: # Training the first 100 files per insect
             break
 
 torch.save(n.state_dict(),"Ins.pth")

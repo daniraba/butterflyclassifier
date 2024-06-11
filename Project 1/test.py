@@ -1,6 +1,5 @@
 import os
 import torch
-import pandas as pd
 import numpy as np
 from PIL import Image
 from INeuralNetwork import INeuralNetwork
@@ -19,11 +18,11 @@ def preprocess(f):
     a=a.reshape(50*50*3)
     return a
 
-test="Project 1/Test/"
+test="Test/"
 types=["Butterfly Test","Grasshopper Test","Ladybug Test","Dragonfly Test","Mosquito Test"]
 
 correct = 0
-
+total = 0
 for i in range(len(types)):
     directory=test+types[i]
     c = 0
@@ -40,13 +39,14 @@ for i in range(len(types)):
     
         target=np.zeros(len(types))
         target[label]=1.0
-        output=n.forward(img).detach.numpy()
+        output=n.forward(img).detach().numpy()
 
+        #print(output)
+        
+        total += 1
+        guess=np.argmax(output)
+       
+        if guess==label:
+            correct+=1
 
-        c += 1
-        if c == 100:
-            guess=np.argmax(output)
-            if guess==label:
-                correct+=1
-        print("Accuracy:",correct/100)
-        break
+print("Accuracy:",correct/total)
