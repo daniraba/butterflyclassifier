@@ -22,16 +22,16 @@ train="Project 1/Train/"
 types=["Butterfly","Grasshopper","Ladybug","Dragonfly","Mosquito"]
 
 for i in range(len(types)):
-    directory=train+types[i]
+    directory=train+types[i] # Iterates through the types
     c = 0
-    for filename in os.listdir(directory):
+    for filename in os.listdir(directory): # Path to the folder
         f= os.path.join(directory,filename)
-        print(i, f, c)
+        print(i, f, c) # Label, image, count
         try:
-            if os.path.isfile(f):
+            if os.path.isfile(f): # Checks whether it is a file
                 img=preprocess(f)
                 label=i
-        except:
+        except: # Skip if image is not RGB
             print('Skipped')
             continue
     
@@ -40,10 +40,10 @@ for i in range(len(types)):
 
        
 
-        n.train(img,target)
+        n.train(img,target) # Training
 
         c += 1
-        if c == 100:
+        if c == 100: # Training the first 100 files per insect
             break
 
 torch.save(n.state_dict(),"Ins.pth")
