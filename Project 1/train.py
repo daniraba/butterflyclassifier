@@ -1,49 +1,63 @@
-import os
+import os # Operating system
 import numpy as np
 import torch
 import pandas as pd
 from datetime import datetime
-from INeuralNetwork import INeuralNetwork
+from INeuralNetwork import INeuralNetwork, preprocess
 from PIL import Image
 
 n=INeuralNetwork()
 
 
-def preprocess(f):
-    image=Image.open(f)
-    image=image.resize((50,50))
-    #print(image.size)
-    a=np.array(image)/255.0
-    #print(a.shape)
-    a=a.reshape(50*50*3)
-    return a
+train_dir="Train/"
+types=["Butterfly","Grasshopper","Ladybug","Dragonfly"]
+num_classes = len(types)
+file_lists = []
 
-train="Train/"
-types=["Butterfly","Grasshopper","Ladybug","Dragonfly","Mosquito"]
+# Check if file is bad
+def is_bad_file(f):
+    try:
+        image = preprocess(f)
+        return False
+    except:
+        return True
 
-for i in range(len(types)):
-    directory=train+types[i] # Iterates through the types
-    c = 0
-    for filename in os.listdir(directory): # Path to the folder
-        f= os.path.join(directory,filename)
-        print(i, f, c) # Label, image, count
-        try:
-            if os.path.isfile(f): # Checks whether it is a file
-                img=preprocess(f)
-                label=i
-        except: # Skip if image is not RGB
-            print('Skipped')
-            continue
+for i in range(num_classes):
+    dir_path = os.path.join(train_dir, types[i])
+    files = os.listdir(dir_path)
+    remove_list = []
+    for file in files:
+        if is_bad_file(dir_path + '/' + file):
+            remove_list.append(file)
+
+    for r in remove_list:
+        files.remove(r)
+
+    file_lists.append(files)
+
+for i in range(num_classes):
+    print(len(file_lists[i]))
+
+stop_at = 700
+epochs = 1
+
+for epoch in range(epochs):
+    for i in range(stop_at):
+        for label in range(num_classes):
+            dir = train_dir + types[label] + '/'
+            file_list = file_lists[label]
+            file_name = file_list[i]
+            
+            f = dir + file_name
+            print(i, stop_at, f)
+
+            img = preprocess(f)
+            
+            target = np.zeros(num_classes)
+            target[label] = 1.0
+
+            n.train(img, target)
     
-        target=np.zeros(len(types))
-        target[label]=1.0
-
-       
-
-        n.train(img,target) # Training
-
-        c += 1
-        if c == 400: # Training the first 100 files per insect
-            break
 
 torch.save(n.state_dict(),"Ins.pth")
+print("End:", datetime.now())
